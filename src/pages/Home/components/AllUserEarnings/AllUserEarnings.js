@@ -9,7 +9,7 @@ export default function AllUserEarnings() {
     }, []);
 
     const fetchUserEarnings = () => {
-        axios.get('http://localhost:5000/api/v1/earning/allUsersEarnings')
+        axios.get('https://questkart.com/25offers/api/v1/earning/allUsersEarnings')
             .then(function (response) {
                 console.log(response.data.result.data);
                 setUserEarningsData(response.data.result.data);

@@ -11,7 +11,7 @@ const ViewTips = () => {
     }, []);
 
     const fetchTips = () => {
-        axios.get('http://localhost:5000/api/v1/tip/alltips')
+        axios.get('https://questkart.com/25offers/api/v1/tip/alltips')
             .then(function (response) {
                 console.log(response.data);
                 setTipsData(response.data);
@@ -21,7 +21,7 @@ const ViewTips = () => {
     const handleTipDelete = (tipId) => {
         let comfirmDelete = window.confirm('Are You Sure You Want To Delete?');
         if (comfirmDelete) {
-            axios.delete(`http://localhost:5000/api/v1/tip/delete/${tipId}`)
+            axios.delete(`https://questkart.com/25offers/api/v1/tip/delete/${tipId}`)
                 .then((response) => {
                     alert(response.data.message);
                     fetchTips();

@@ -27,7 +27,7 @@ const AddTips = () => {
         bodyFormData.append('imageUrl', imageFile);
         axios({
             method: "POST",
-            url: "http://localhost:5000/api/v1/tips/create",
+            url: "https://questkart.com/25offers/api/v1/tips/create",
             data: bodyFormData,
             headers: { "Content-Type": "multipart/form-data" },
         })
