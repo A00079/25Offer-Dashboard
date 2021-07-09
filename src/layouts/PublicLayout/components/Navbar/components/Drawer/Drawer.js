@@ -448,7 +448,7 @@ const MiniDrawer = (props) => {
                 ""
               ) : (
                 <img
-                  src="./img/brandlogo.png"
+                  src="./img/brandlogo.PNG"
                   className="hidden sm:block object-contain object-fit w-12 h-12 py-2 -mx-3"
                 />
               )}
@@ -467,7 +467,7 @@ const MiniDrawer = (props) => {
             <div className="flex flex-col ml-4">
               <Typography className={classes.title} variant="h6" noWrap>
                 <Text variant="infoDark" weight="700">
-                  AdsRevenue
+                  Offers Panel
                 </Text>
               </Typography>
               <small
