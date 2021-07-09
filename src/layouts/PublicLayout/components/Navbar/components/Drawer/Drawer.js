@@ -518,7 +518,7 @@ const MiniDrawer = (props) => {
         <div className={classes.toolbar}>
           <div className="pl-4">
             <img
-              src="http://adsrevenue.co/img/final-logo.png"
+              src="/img/brandlogo.png"
               className="mx-auto object-contain object-fit w-40 h-8"
             />
           </div>
