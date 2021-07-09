@@ -517,8 +517,8 @@ const MiniDrawer = (props) => {
       >
         <div className={classes.toolbar}>
           <div class="pl-4 flex flex-row space-x-2 items-center">
-            <img src="/img/brandlogo.png" class="mx-auto w-12 h-12" />
-            <p class="text-lg font-semibold text-gray-600">Offers Panel</p>
+            <img src="/img/brandlogo.png" class="bg-gray-100 rounded-lg mx-auto w-10 h-10" />
+            <p class="text-lg font-medium text-gray-500">Offers Panel</p>
           </div>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (

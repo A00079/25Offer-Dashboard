@@ -10,6 +10,8 @@ import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+let currentPage = 1;
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -28,6 +30,10 @@ const Userprofile = (props) => {
     const [earningId, setEarningId] = React.useState('');
     const [userAmount, setUserAmount] = React.useState('');
 
+    const [totalPages, setTotalPages] = useState('');
+    const [disableNext, setDisableNext] = useState(false);
+    const [disablePrevious, setDisablePrevious] = useState(true);
+
     const handleImageChange = (event) => {
         setImageFilePreview(URL.createObjectURL(event.target.files[0]));
         setImageFile(event.target.files[0]);
@@ -36,10 +42,11 @@ const Userprofile = (props) => {
         setOpen(true);
     };
 
-    const handleUserEarningModelOpen = (userId, id) => {
+    const handleUserEarningModelOpen = (userId, id, walletAmount) => {
         setUserEarningModel(true);
         setEarningId(id);
         setUserId(userId);
+        setUserAmount(walletAmount);
     };
 
 
@@ -61,6 +68,7 @@ const Userprofile = (props) => {
     useEffect(() => {
         console.log('props', props.match.params.id);
         fetchUserProfile(props.match.params.id);
+        fetchUserAllEarnings();
     }, []);
 
     const fetchUserProfile = (id) => {
@@ -80,10 +88,13 @@ const Userprofile = (props) => {
                 //handle error
                 console.log(response);
             });
+    }
 
-        axios.get(`https://questkart.com/25offers/api/v1/earning/userEarnings/30?page=8&limit=2`)
+    const fetchUserAllEarnings = () => {
+        axios.get(`https://questkart.com/25offers/api/v1/earning/userEarnings/30?page=${currentPage}&limit=10`)
             .then(function (response) {
                 console.log(response.data);
+                setTotalPages(response.data.result.totalPages);
                 setUserEarningData(response.data.result.data);
             })
             .catch(function (response) {
@@ -92,9 +103,30 @@ const Userprofile = (props) => {
             });
     }
 
+    const validatePaginationPrevious = () => {
+        if (currentPage !== 1) {
+            currentPage -= 1;
+            fetchUserAllEarnings();
+            if (currentPage == 1) {
+                setDisablePrevious(true);
+                setDisableNext(false);
+            }
+        } else {
+            setDisablePrevious(true);
+        }
+    }
+
+    const validatePaginationNext = () => {
+        if (currentPage < totalPages) {
+            currentPage += 1;
+            fetchUserAllEarnings();
+            setDisablePrevious(false);
+        } else {
+            setDisableNext(true);
+        }
+    }
+
     const handleSave = () => {
-        console.log('Save Data', input);
-        console.log('Tip Image', imageFile);
         let data = {
             'amount': input.amount,
             'offerName': input.offername,
@@ -109,6 +141,7 @@ const Userprofile = (props) => {
                 //handle success
                 console.log(response);
                 alert('Saved Successfully');
+                fetchUserAllEarnings();
                 document.getElementById('offername').value = '';
                 document.getElementById('amount').value = '';
             })
@@ -131,11 +164,12 @@ const Userprofile = (props) => {
                 //handle success
                 console.log(response);
                 alert('Added Successfully');
+                fetchUserProfile(props.match.params.id);
+                fetchUserAllEarnings();
                 document.getElementById('useramount').value = '';
             })
-            .catch(function (response) {
-                //handle error
-                console.log(response);
+            .catch((error) => {
+                console.log('error', error);
             });
     }
 
@@ -222,7 +256,7 @@ const Userprofile = (props) => {
                     </div>
                     <div className="grid grid-cols-12 gap-4 mt-8">
                         <div className='col-span-6 w-full'>
-                            <h4 className='text-lg font-medium pl-2'>Withdrawls</h4>
+                            <h4 className='text-sm font-bold text-gray-600 px-2'>Withdrawls</h4>
                             <div class="flex flex-wrap justify-between items-center w-full overflow-auto h-60 p-2" id="journal-scroll">
                                 {
                                     totalWithdrawls !== 0 && totalWithdrawls.map((el, index) => {
@@ -247,30 +281,43 @@ const Userprofile = (props) => {
                             </div>
                         </div>
                         <div className='col-span-6 w-full'>
-                            <h4 className='text-lg font-medium pl-2'>User Earnings</h4>
-                            <div class="flex flex-wrap justify-start w-full overflow-auto h-60 p-2" id="journal-scroll">
+                            <div className='flex flex-row justify-between items-center mb-4'>
+                                <h4 className='text-sm font-bold text-gray-600 px-4'>User Earnings</h4>
+
+                                <div className='flex flex-row justify-center space-x-1 items-center'>
+                                    <button disabled={disablePrevious} onClick={() => validatePaginationPrevious()} className={disablePrevious ? 'bg-gray-200 px-2 py-1 rounded-sm text-xs flex flex-row items-center space-x-2' : 'bg-indigo-500 px-2 py-1 rounded-sm text-xs text-white flex flex-row items-center space-x-2'}>
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                                        <small>Previous</small>
+                                    </button>
+                                    <button disabled={disableNext} onClick={() => validatePaginationNext()} className={disableNext ? "bg-gray-200 px-2 py-1 text-white rounded-sm text-xs flex flex-row items-center space-x-2" : "bg-indigo-700 px-2 py-1 text-white rounded-sm text-xs flex flex-row items-center space-x-2"} >
+                                        <small>Next</small>
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap justify-start w-full overflow-auto h-48 p-2" id="journal-scroll">
                                 {
                                     userEarningData !== 0 && userEarningData.map((el, index) => {
                                         return (
-                                            <div class="w-1/2">
+                                            <div class="w-1/2 h-14">
                                                 <div class="p-1 w-full">
-                                                    <div class="h-full w-full flex items-center border-gray-200 border p-2 rounded-lg">
-                                                        <div alt="team" class="w-8 h-8 bg-green-50 object-cover object-center flex-shrink-0 rounded-sm mr-2">
+                                                    <div class="h-full w-full flex items-center space-x-2 border-gray-200 border p-2 rounded-lg">
+                                                        <div alt="team" class="w-8 h-8 bg-green-50 object-cover object-center flex-shrink-0 rounded-sm mr-0">
                                                             <img className="h-8 w-8 rounded-full" src={el.offerImageUrl} alt="" />
                                                         </div>
-                                                        <div class="flex-grow">
+                                                        <div class="flex-grow w-full">
                                                             <p class="text-xs text-gray-700 font-medium capitalize">{el.offerName}</p>
-                                                            <h2 class="text-gray-900 text-xs title-font font-medium">Amount: <span className='text-green-500 text-xs font-bold'>{el.amount}</span></h2>
+                                                            <h2 class="text-gray-900 text-xs title-font font-medium whitespace-nowrap">Amount: <span className='text-green-500 text-xs font-bold'>{el.amount}</span></h2>
                                                         </div>
-                                                        <div class="flex-grow">
+                                                        <div class="flex-grow w-full">
                                                             <p class="text-xs text-gray-500 font-medium">Status</p>
-                                                            <p class="text-xs text-gray-500 font-medium capitalize">{!!el.status ? el.status : 'Not Availiable'}</p>
+                                                            <p class="text-xs text-gray-500 font-medium capitalize whitespace-nowrap">{!!el.status ? el.status : <small>Not Availiable</small>}</p>
                                                         </div>
-                                                        <div class="flex-grow">
+                                                        <div class="flex-grow w-full">
                                                             {
                                                                 !!el.status && el.status.toLocaleLowerCase() == 'pending' ?
-                                                                    <svg onClick={() => handleUserEarningModelOpen(el.userId, el.id)} class="w-6 h-6 text-blue-500 cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                                                                    : <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                                    <svg onClick={() => handleUserEarningModelOpen(el.userId, el.id, el.amount)} class="w-6 h-6 text-blue-500 cursor-pointer float-right" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                                                                    : <svg class="float-right w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                                                             }
                                                         </div>
                                                     </div>
@@ -358,7 +405,7 @@ const Userprofile = (props) => {
                     <DialogContentText id="alert-dialog-slide-description">
                         <div className="grid grid-cols-12 gap-2">
                             <div className="col-span-12 w-full">
-                                <TextField id="useramount" name='useramount' onChange={(e) => setUserAmount(e.target.value)} label="Amount" variant="outlined" />
+                                <TextField id="useramount" focused={true} value={userAmount} helperText="Note: Entered Amount amount cannot be greater than pending amount" name='useramount' onChange={(e) => setUserAmount(e.target.value)} label="Amount" variant="outlined" />
                             </div>
                         </div>
                     </DialogContentText>
