@@ -3,7 +3,7 @@ import { Stats, AllUserEarnings } from "./components";
 
 const Home = () => {
   return (
-    <div className="p-3 space-y-4 bg-white">
+    <div className="p-3 space-y-4 bg-white h-screen">
       <Stats />
       <AllUserEarnings />
     </div>

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
 let currentPage = 1;
@@ -64,7 +65,7 @@ export default function AllUserEarnings() {
                 </div>
             </div>
             <div className="grid grid-cols-12 gap-2">
-                <div className="col-span-6 w-full space-y-1 overflow-auto h-60 p-2" id="journal-scroll">
+                <div className="col-span-6 w-full space-y-1 overflow-auto h-72 p-2" id="journal-scroll">
                     {
                         userEarningsData.map((el, index) => (
                             <div class="flex flex-wrap -m-2">
@@ -96,7 +97,41 @@ export default function AllUserEarnings() {
                         ))
                     }
                 </div>
+                <div className="col-span-6 w-full">
+                    <div class="p-4 w-full -my-9 border border-gray-300 rounded-lg shadow-sm">
+                        <div class="h-full flex flex-col items-center text-center">
+                            <img alt="team" class="flex-shrink-0 rounded-lg w-48 h-40 object-fit mb-2" src="/img/AddOffers.png" />
+                            <div class="w-full mx-auto">
+                                <h2 class="title-font font-medium text-lg text-gray-900">Add New Offer</h2>
+                                <h3 class="text-gray-500 mb-3 text-xs">DIY tote bag drinking vinegar cronut adaptogen squid fanny pack vaporware.</h3>
+                                <div className='text-center w-full mx-auto'>
+                                    <Button variant="contained" color="primary">
+                                        <svg class="w-6 h-6 pr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd"></path></svg>Add Offer
+                                    </Button>
+                                </div>
+                                <span class="inline-flex">
+                                    <a class="text-gray-500">
+                                        <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                                        </svg>
+                                    </a>
+                                    <a class="ml-2 text-gray-500">
+                                        <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                                        </svg>
+                                    </a>
+                                    <a class="ml-2 text-gray-500">
+                                        <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                                        </svg>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </React.Fragment >
     )
 }

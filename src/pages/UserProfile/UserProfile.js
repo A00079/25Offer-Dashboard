@@ -257,7 +257,7 @@ const Userprofile = (props) => {
                     <div className="grid grid-cols-12 gap-4 mt-8">
                         <div className='col-span-6 w-full'>
                             <h4 className='text-sm font-bold text-gray-600 px-2'>Withdrawls</h4>
-                            <div class="flex flex-wrap justify-between items-center w-full overflow-auto h-60 p-2" id="journal-scroll">
+                            <div class="flex flex-wrap justify-between items-center w-full overflow-auto h-80 p-2" id="journal-scroll">
                                 {
                                     totalWithdrawls !== 0 && totalWithdrawls.map((el, index) => {
                                         return (
@@ -295,7 +295,7 @@ const Userprofile = (props) => {
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex flex-wrap justify-start w-full overflow-auto h-48 p-2" id="journal-scroll">
+                            <div class="flex flex-wrap justify-start w-full overflow-auto h-72 p-2" id="journal-scroll">
                                 {
                                     userEarningData !== 0 && userEarningData.map((el, index) => {
                                         return (
