@@ -66,13 +66,12 @@ const Userprofile = (props) => {
     const [userProfileData, setUserProfileData] = useState({});
 
     useEffect(() => {
-        console.log('props', props.match.params.id);
-        fetchUserProfile(props.match.params.id);
+        fetchUserProfile();
         fetchUserAllEarnings();
     }, []);
 
-    const fetchUserProfile = (id) => {
-        axios.get(`https://questkart.com/25offers/api/v1/user/details/${id}`)
+    const fetchUserProfile = () => {
+        axios.get(`https://questkart.com/25offers/api/v1/user/details/${props.match.params.id}`)
             .then(function (response) {
                 console.log(response.data);
                 setUserProfileData(response.data.user);
@@ -91,7 +90,7 @@ const Userprofile = (props) => {
     }
 
     const fetchUserAllEarnings = () => {
-        axios.get(`https://questkart.com/25offers/api/v1/earning/userEarnings/30?page=${currentPage}&limit=10`)
+        axios.get(`https://questkart.com/25offers/api/v1/earning/userEarnings/${props.match.params.id}?page=${currentPage}&limit=10`)
             .then(function (response) {
                 console.log(response.data);
                 setTotalPages(response.data.result.totalPages);
@@ -142,8 +141,10 @@ const Userprofile = (props) => {
                 console.log(response);
                 alert('Saved Successfully');
                 fetchUserAllEarnings();
+                fetchUserProfile();
                 document.getElementById('offername').value = '';
                 document.getElementById('amount').value = '';
+                handleClose();
             })
             .catch(function (response) {
                 //handle error
@@ -164,9 +165,11 @@ const Userprofile = (props) => {
                 //handle success
                 console.log(response);
                 alert('Added Successfully');
+                document.getElementById('useramount').value = '';
+                setUserAmount('');
                 fetchUserProfile(props.match.params.id);
                 fetchUserAllEarnings();
-                document.getElementById('useramount').value = '';
+                handleUserEarningClose();
             })
             .catch((error) => {
                 console.log('error', error);
@@ -188,7 +191,9 @@ const Userprofile = (props) => {
                                     </div>
                                     <div class="flex flex-col w-full md:items-start md:text-left items-center text-center">
                                         <div className='flex flex-row justify-between w-full items-center'>
-                                            <h1 class="title-font sm:text-2xl text-3xl font-medium text-gray-900">{userProfileData.name}
+                                            <h1 class="title-font sm:text-2xl text-3xl font-medium text-gray-900 flex flex-row space-x-1 items-center">
+                                                <p><svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg></p>
+                                                <p>{userProfileData.name}</p>
                                             </h1>
                                             <button onClick={handleClickOpen} className='flex flex-row space-x-1 items-center bg-green-600 h-6 rounded-sm px-1'>
                                                 <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
@@ -223,16 +228,23 @@ const Userprofile = (props) => {
                                 : 'No Profile Data Found'
                         }
                         <div className='col-span-6 w-full border-l border-gray-300'>
-                            <h4 className='text-lg font-medium pl-2'>Statistics</h4>
+                            <div className='flex flex-row justify-between items-center w-full'>
+                                <h4 className='text-lg font-medium pl-2 text-gray-500 flex flex-row space-x-2 items-center'>
+                                    <svg class="w-6 h-6 text-blue-500 bg-indigo-200 rounded-sm p-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+                                    <p>Statistics</p>
+                                </h4>
+                                <svg class="w-7 h-7 bg-gray-200 p-1 rounded-lg cursor-pointer" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path></svg>
+                            </div>
                             <div className='flex flex-row justify-start space-x-3 items-center mt-5 ml-2'>
                                 <div class="flex flex-wrap -m-2">
                                     <div class="p-2 w-full">
                                         <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg">
                                             <img alt="team" class="w-12 h-12 bg-gray-100 object-cover object-center flex-shrink-0 rounded-sm mr-4" src="https://dummyimage.com/80x80" />
                                             <div class="flex-grow">
-                                                <h2 class="text-gray-900 title-font font-medium">Pending</h2>
-                                                <p class="text-gray-500">
-                                                    {pendingData}
+                                                <h2 class="text-gray-700 title-font font-semibold">Pending</h2>
+                                                <p class="text-yellow-500 text-lg font-bold flex flex-row space-x-1 items-center">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 5a1 1 0 100 2h1a2 2 0 011.732 1H7a1 1 0 100 2h2.732A2 2 0 018 11H7a1 1 0 00-.707 1.707l3 3a1 1 0 001.414-1.414l-1.483-1.484A4.008 4.008 0 0011.874 10H13a1 1 0 100-2h-1.126a3.976 3.976 0 00-.41-1H13a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                                                    <span>{pendingData}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -243,9 +255,10 @@ const Userprofile = (props) => {
                                         <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg">
                                             <img alt="team" class="w-12 h-12 bg-gray-100 object-cover object-center flex-shrink-0 rounded-sm mr-4" src="https://dummyimage.com/80x80" />
                                             <div class="flex-grow">
-                                                <h2 class="text-gray-900 title-font font-medium">Total Earnings</h2>
-                                                <p class="text-gray-500">
-                                                    {totalEarnings}
+                                                <h2 class="text-gray-700 title-font font-semibold">Total Earnings</h2>
+                                                <p class="text-green-500 text-lg font-bold space-x-1 flex flex-row items-center">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 5a1 1 0 100 2h1a2 2 0 011.732 1H7a1 1 0 100 2h2.732A2 2 0 018 11H7a1 1 0 00-.707 1.707l3 3a1 1 0 001.414-1.414l-1.483-1.484A4.008 4.008 0 0011.874 10H13a1 1 0 100-2h-1.126a3.976 3.976 0 00-.41-1H13a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                                                    <span>{totalEarnings}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -256,7 +269,10 @@ const Userprofile = (props) => {
                     </div>
                     <div className="grid grid-cols-12 gap-4 mt-8">
                         <div className='col-span-6 w-full'>
-                            <h4 className='text-sm font-bold text-gray-600 px-2'>Withdrawls</h4>
+                            <h4 className='text-sm font-bold text-gray-600 px-2 flex flex-row space-x-1 items-center'>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                                <p>Withdrawls</p>
+                            </h4>
                             <div class="flex flex-wrap justify-between items-center w-full overflow-auto h-80 p-2" id="journal-scroll">
                                 {
                                     totalWithdrawls !== 0 && totalWithdrawls.map((el, index) => {
@@ -282,8 +298,10 @@ const Userprofile = (props) => {
                         </div>
                         <div className='col-span-6 w-full'>
                             <div className='flex flex-row justify-between items-center mb-4'>
-                                <h4 className='text-sm font-bold text-gray-600 px-4'>User Earnings</h4>
-
+                                <h4 className='text-sm font-bold text-gray-600 px-4 flex flex-row space-x-1 items-centerF'>
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    <p>User Earnings</p>
+                                </h4>
                                 <div className='flex flex-row justify-center space-x-1 items-center'>
                                     <button disabled={disablePrevious} onClick={() => validatePaginationPrevious()} className={disablePrevious ? 'bg-gray-200 px-2 py-1 rounded-sm text-xs flex flex-row items-center space-x-2' : 'bg-indigo-500 px-2 py-1 rounded-sm text-xs text-white flex flex-row items-center space-x-2'}>
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
@@ -295,18 +313,18 @@ const Userprofile = (props) => {
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex flex-wrap justify-start w-full overflow-auto h-72 p-2" id="journal-scroll">
+                            <div class="grid grid-cols-12 w-full overflow-auto h-60 p-2" id="journal-scroll">
                                 {
                                     userEarningData !== 0 && userEarningData.map((el, index) => {
                                         return (
-                                            <div class="w-1/2 h-14">
+                                            <div class="col-span-6 w-full">
                                                 <div class="p-1 w-full">
                                                     <div class="h-full w-full flex items-center space-x-2 border-gray-200 border p-2 rounded-lg">
                                                         <div alt="team" class="w-8 h-8 bg-green-50 object-cover object-center flex-shrink-0 rounded-sm mr-0">
                                                             <img className="h-8 w-8 rounded-full" src={el.offerImageUrl} alt="" />
                                                         </div>
                                                         <div class="flex-grow w-full">
-                                                            <p class="text-xs text-gray-700 font-medium capitalize">{el.offerName}</p>
+                                                            <p class="text-xs text-gray-700 font-medium capitalize truncate w-24">{el.offerName}</p>
                                                             <h2 class="text-gray-900 text-xs title-font font-medium whitespace-nowrap">Amount: <span className='text-green-500 text-xs font-bold'>{el.amount}</span></h2>
                                                         </div>
                                                         <div class="flex-grow w-full">
@@ -405,7 +423,7 @@ const Userprofile = (props) => {
                     <DialogContentText id="alert-dialog-slide-description">
                         <div className="grid grid-cols-12 gap-2">
                             <div className="col-span-12 w-full">
-                                <TextField id="useramount" focused={true} value={userAmount} helperText="Note: Entered Amount amount cannot be greater than pending amount" name='useramount' onChange={(e) => setUserAmount(e.target.value)} label="Amount" variant="outlined" />
+                                <TextField id="useramount" inputProps={{ readOnly: true }} focused={true} value={userAmount} helperText="Note: Entered Amount amount cannot be greater than pending amount" name='useramount' onChange={(e) => setUserAmount(e.target.value)} label="Amount" variant="outlined" />
                             </div>
                         </div>
                     </DialogContentText>

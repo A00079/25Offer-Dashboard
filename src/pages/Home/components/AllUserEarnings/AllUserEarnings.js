@@ -13,7 +13,29 @@ export default function AllUserEarnings() {
 
     useEffect(() => {
         fetchUserEarnings();
+        fetchAllTransactions();
     }, []);
+
+    const fetchAllTransactions = () => {
+        var data = '';
+
+        var config = {
+            method: 'get',
+            url: 'https://api.razorpay.com/v1/transactions?account_number=2323230024948434',
+            headers: {
+                'Authorization': 'Basic cnpwX3Rlc3RfV2JSVHc0bEZSUDdrUm46djV0TFhDU3o0dUtnWDc1anR6aGRuejNC'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     const fetchUserEarnings = () => {
         axios.get(`https://questkart.com/25offers/api/v1/earning/allUsersEarnings?page=${currentPage}&limit=5`)
@@ -73,8 +95,11 @@ export default function AllUserEarnings() {
                                     <div class="h-full flex items-center border-gray-300 border p-2 rounded-lg">
                                         <img alt="team" class="w-12 h-12 bg-gray-100 object-cover object-center flex-shrink-0 rounded-sm mr-4" src="https://dummyimage.com/80x80" />
                                         <div class="flex-grow w-full">
-                                            <h2 class="text-gray-700 font-medium capitalize">{el.offerName}</h2>
-                                            <p class="text-gray-500 text-xs">{new Date(el.createdAt).toDateString()}</p>
+                                            <h2 class="text-gray-700 font-medium capitalize">{el.user.name}</h2>
+                                            <div className='flex flex-col items-start'>
+                                                <small class="text-gray-500 text-xs capitalize">{el.offerName}</small>
+                                                <small class="text-gray-500 text-xs font-semibold capitalize" style={{ fontSize: '0.7rem' }}>{el.user.level.name}</small>
+                                            </div>
                                         </div>
                                         <div class="flex-grow w-full">
                                             <h2 class="text-gray-600 capitalize font-semibold">Amount</h2>
@@ -90,6 +115,10 @@ export default function AllUserEarnings() {
                                                         :
                                                         <p class="text-red-500 capitalize font-semibold">{el.status}</p>
                                             }
+                                        </div>
+                                        <div class="flex-grow w-full">
+                                            <h2 class="text-gray-600 capitalize font-semibold">Unique Code</h2>
+                                            <p class="text-gray-500 font-semibold">{el.user.uniqueCode}</p>
                                         </div>
                                     </div>
                                 </div>

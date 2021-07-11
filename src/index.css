@@ -61,6 +61,12 @@ li:hover > button svg {
   background-color: #448cff;
 }
 
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .mdl-card.mdl-shadow--2dp {
   width: 100%;
   max-width: 100%;
