@@ -346,7 +346,7 @@ const AddOffers = () => {
                                         onChange={(e) => handleInputChange(e)}
                                     >
                                         <MenuItem value={1}>Fin tech</MenuItem>
-                                        <MenuItem value={0}>Ed tech</MenuItem>
+                                        <MenuItem value={3}>Ed tech</MenuItem>
                                         <MenuItem value={2}>Others</MenuItem>
                                     </Select>
                                 </FormControl>
