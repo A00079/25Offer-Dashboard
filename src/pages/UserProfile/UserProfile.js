@@ -71,7 +71,7 @@ const Userprofile = (props) => {
     }, []);
 
     const fetchUserProfile = () => {
-        axios.get(`https://questkart.com/25offers/api/v1/user/details/${props.match.params.id}`)
+        axios.get(`http://localhost:5000/api/v1/user/details/${props.match.params.id}`)
             .then(function (response) {
                 console.log(response.data);
                 setUserProfileData(response.data.user);
@@ -90,7 +90,7 @@ const Userprofile = (props) => {
     }
 
     const fetchUserAllEarnings = () => {
-        axios.get(`https://questkart.com/25offers/api/v1/earning/userEarnings/${props.match.params.id}?page=${currentPage}&limit=10`)
+        axios.get(`http://localhost:5000/api/v1/earning/userEarnings/${props.match.params.id}?page=${currentPage}&limit=10`)
             .then(function (response) {
                 console.log(response.data);
                 setTotalPages(response.data.result.totalPages);
@@ -133,7 +133,7 @@ const Userprofile = (props) => {
         }
         axios({
             method: "POST",
-            url: `https://questkart.com/25offers/api/v1/earning/addEarning/${props.match.params.id}`,
+            url: `http://localhost:5000/api/v1/earning/addEarning/${props.match.params.id}`,
             data: data,
         })
             .then(function (response) {
@@ -158,7 +158,7 @@ const Userprofile = (props) => {
         }
         axios({
             method: "POST",
-            url: `https://questkart.com/25offers/api/v1/payment/addToWallet/${userId}/${earningId}`,
+            url: `http://localhost:5000/api/v1/payment/addToWallet/${userId}/${earningId}`,
             data: data,
         })
             .then(function (response) {
