@@ -10,6 +10,11 @@ import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 let currentPage = 1;
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -17,6 +22,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const Userprofile = (props) => {
+    const [selectedOffersData, setSelectedOffersData] = React.useState('');
+    const [offersData, setOffersData] = React.useState([]);
+    const [amountData, setAmountData] = React.useState("");
+
     const [open, setOpen] = React.useState(false);
     const [input, setInput] = useState({});
     const [imageFilePreview, setImageFilePreview] = React.useState('');
@@ -51,8 +60,12 @@ const Userprofile = (props) => {
 
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setInput({ ...input, [name]: value });
+        setSelectedOffersData(e.target.value);
+        offersData.forEach((el) => {
+            if (el.offerName == e.target.value) {
+                setAmountData(el.offerPayout);
+            }
+        });
     };
 
     const handleClose = () => {
@@ -68,7 +81,24 @@ const Userprofile = (props) => {
     useEffect(() => {
         fetchUserProfile();
         fetchUserAllEarnings();
+        fetchOffersDropDwon();
     }, []);
+
+    const fetchOffersDropDwon = () => {
+        axios.get(`http://localhost:5000/api/v1/offer/alloffers`)
+            .then(function (response) {
+                console.log(response.data);
+                let data = [];
+                response.data.forEach((el) => {
+                    data.push({ 'offerName': el.name, 'offerPayout': el.userPayout });
+                });
+                setOffersData(data);
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+    }
 
     const fetchUserProfile = () => {
         axios.get(`http://localhost:5000/api/v1/user/details/${props.match.params.id}`)
@@ -102,6 +132,21 @@ const Userprofile = (props) => {
             });
     }
 
+    const handleUserEarningDelete = (userId, id) => {
+        let confirmflag = window.confirm('Are you want to remove from pending.');
+        if (!!confirmflag) {
+            axios.patch(`http://localhost:5000/api/v1/earning/revertUserEarning/${userId}/${id}`)
+                .then(function (response) {
+                    console.log(response.data);
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+        }
+
+    }
+
     const validatePaginationPrevious = () => {
         if (currentPage !== 1) {
             currentPage -= 1;
@@ -127,8 +172,8 @@ const Userprofile = (props) => {
 
     const handleSave = () => {
         let data = {
-            'amount': input.amount,
-            'offerName': input.offername,
+            'amount': amountData,
+            'offerName': selectedOffersData,
             'offerImageUrl': ''
         }
         axios({
@@ -319,7 +364,7 @@ const Userprofile = (props) => {
                                         return (
                                             <div class="col-span-6 w-full">
                                                 <div class="p-1 w-full">
-                                                    <div class="h-full w-full flex items-center space-x-2 border-gray-200 border p-2 rounded-lg">
+                                                    <div class="h-full w-full flex items-center space-x-1 border-gray-200 border p-2 rounded-lg">
                                                         <div alt="team" class="w-8 h-8 bg-green-50 object-cover object-center flex-shrink-0 rounded-sm mr-0">
                                                             <img className="h-8 w-8 rounded-full" src={el.offerImageUrl} alt="" />
                                                         </div>
@@ -334,8 +379,13 @@ const Userprofile = (props) => {
                                                         <div class="flex-grow w-full">
                                                             {
                                                                 !!el.status && el.status.toLocaleLowerCase() == 'pending' ?
-                                                                    <svg onClick={() => handleUserEarningModelOpen(el.userId, el.id, el.amount)} class="w-6 h-6 text-blue-500 cursor-pointer float-right" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                                                                    <div className="flex flex-row justify-between w-full">
+                                                                        <svg onClick={() => handleUserEarningModelOpen(el.userId, el.id, el.amount)} class="w-6 h-6 text-blue-500 cursor-pointer float-right" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+
+                                                                        <svg onClick={() => handleUserEarningDelete(el.userId, el.id)} class="cursor-pointer w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                                                                    </div>
                                                                     : <svg class="float-right w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+
                                                             }
                                                         </div>
                                                     </div>
@@ -364,10 +414,30 @@ const Userprofile = (props) => {
                     <DialogContentText id="alert-dialog-slide-description">
                         <div className="grid grid-cols-12 gap-2">
                             <div className="col-span-6 w-full">
-                                <TextField id="offername" name='offername' onChange={(e) => handleInputChange(e)} focused={true} label="Offer Name" variant="outlined" />
+                                <FormControl fullWidth name="offersdrop">
+                                    <InputLabel name="offersdrop" id="demo-simple-select-label">Offers</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={selectedOffersData}
+                                        label="Offers"
+                                        onChange={handleInputChange}
+                                    >
+                                        {
+                                            offersData && offersData.length ?
+                                                offersData.map((el, index) => {
+                                                    return (
+                                                        <MenuItem value={el.offerName}>{el.offerName}</MenuItem>
+                                                    )
+                                                })
+                                                : ""
+                                        }
+                                    </Select>
+                                </FormControl>
+                                {/* <TextField id="offername" name='offername' onChange={(e) => handleInputChange(e)} focused={true} label="Offer Name" variant="outlined" /> */}
                             </div>
                             <div className="col-span-6 w-full">
-                                <TextField id="amount" name='amount' onChange={(e) => handleInputChange(e)} label="Amount" variant="outlined" />
+                                <TextField id="amount" name='amount' value={amountData} label="Amount" variant="outlined" />
                             </div>
                             {/* <div className="col-span-12 w-full mt-4">
                                 <div className="w-full">
