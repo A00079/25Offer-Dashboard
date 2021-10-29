@@ -44,7 +44,7 @@ export default function AllUserEarnings() {
     }
 
     const fetchUserEarnings = () => {
-        axios.get(`http://localhost:5000/api/v1/earning/allUsersEarnings?page=${currentPage}&limit=5`)
+        axios.get(`https://candidleads.com/candid-offers/api/v1/earning/allUsersEarnings?page=${currentPage}&limit=5`)
             .then(function (response) {
                 console.log(response.data.result.data);
                 setTotalPages(response.data.result.totalPages);
@@ -76,7 +76,7 @@ export default function AllUserEarnings() {
     }
 
     const downloadXL = () => {
-        axios.get(`http://localhost:5000/api/v1/earning/allUsersEarnings?all=true`)
+        axios.get(`https://candidleads.com/candid-offers/api/v1/earning/allUsersEarnings?all=true`)
             .then(function (response) {
                 let SheetData = [];
                 let filtertedData = response.data.result.data.filter((el, index) => {

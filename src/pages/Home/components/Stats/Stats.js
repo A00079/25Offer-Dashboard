@@ -17,7 +17,7 @@ const Stats = (props) => {
   const getSuggestions = async (word) => {
     if (word) {
       setLoading(false);
-      axios.get(`http://localhost:5000/api/v1/user/search?query=${word}`)
+      axios.get(`https://candidleads.com/candid-offers/api/v1/user/search?query=${word}`)
         .then(function (response) {
           setOptions(response.data.suggestions);
           setLoading(true);
