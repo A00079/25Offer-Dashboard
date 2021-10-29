@@ -14,7 +14,7 @@ const AddNotification = () => {
     const SaveNotification = () => {
         axios({
             method: "POST",
-            url: "https://questkart.com/25offers/api/v1/notification/create",
+            url: "https://candidleads.com/candid-offers/api/v1/notification/create",
             data: {
                 message: notificationMessage
             },

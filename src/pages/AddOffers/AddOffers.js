@@ -159,7 +159,7 @@ const AddOffers = () => {
 
         axios({
             method: "POST",
-            url: "https://questkart.com/25offers/api/v1/offer/create",
+            url: "https://candidleads.com/candid-offers/api/v1/offer/create",
             data: bodyFormData,
             headers: { "Content-Type": "multipart/form-data" },
         })
